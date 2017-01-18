@@ -1,4 +1,4 @@
-using Dex
+using DexClient
 using Base.Test
 
 # write your own tests here
