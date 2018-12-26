@@ -1,8 +1,9 @@
 syntax = "proto3";
+option java_package = "com.coreos.dex.api";
+option py_generic_services = true;
+option java_generic_services = true;
 
 package api;
-
-option cc_generic_services = true;
 
 // Client represents an OAuth2 client.
 message Client {
@@ -32,9 +33,23 @@ message DeleteClientReq {
   string id = 1;
 }
 
-// DeleteClientResp determines if the. 
+// DeleteClientResp determines if the client is deleted successfully. 
 message DeleteClientResp {
   bool not_found = 1;
+}
+
+// UpdateClientReq is a request to update an exisitng client.
+message UpdateClientReq {
+    string id = 1;
+    repeated string redirect_uris = 2;
+    repeated string trusted_peers = 3;
+    string name = 4;
+    string logo_url = 5;
+}
+
+// UpdateClientResp returns the reponse form updating a client.
+message UpdateClientResp {
+    bool not_found = 1;
 }
 
 // TODO(ericchiang): expand this.
@@ -85,7 +100,7 @@ message DeletePasswordResp {
 // ListPasswordReq is a request to enumerate passwords.
 message ListPasswordReq {}
 
-// ListPasswordResp returs a list of passwords.
+// ListPasswordResp returns a list of passwords.
 message ListPasswordResp {
   repeated Password passwords = 1;
 }
@@ -102,10 +117,45 @@ message VersionResp {
   int32 api = 2;
 }
 
+// RefreshTokenRef contains the metadata for a refresh token that is managed by the storage.
+message RefreshTokenRef {
+  // ID of the refresh token.
+  string id = 1;
+  string client_id = 2;
+  int64 created_at = 5;
+  int64 last_used = 6;
+}
+
+// ListRefreshReq is a request to enumerate the refresh tokens of a user.
+message ListRefreshReq {
+  // The "sub" claim returned in the ID Token.
+  string user_id = 1;
+}
+
+// ListRefreshResp returns a list of refresh tokens for a user.
+message ListRefreshResp {
+  repeated RefreshTokenRef refresh_tokens = 1;
+}
+
+// RevokeRefreshReq is a request to revoke the refresh token of the user-client pair.
+message RevokeRefreshReq {
+  // The "sub" claim returned in the ID Token.
+  string user_id = 1;
+  string client_id = 2;
+}
+
+// RevokeRefreshResp determines if the refresh token is revoked successfully. 
+message RevokeRefreshResp {
+  // Set to true is refresh token was not found and token could not be revoked.
+  bool not_found = 1;
+}
+
 // Dex represents the dex gRPC service.
 service Dex {
   // CreateClient creates a client.
   rpc CreateClient(CreateClientReq) returns (CreateClientResp) {};
+  // UpdateClient updates an existing client
+  rpc UpdateClient(UpdateClientReq) returns (UpdateClientResp) {};
   // DeleteClient deletes the provided client.
   rpc DeleteClient(DeleteClientReq) returns (DeleteClientResp) {};
   // CreatePassword creates a password.
@@ -118,4 +168,10 @@ service Dex {
   rpc ListPasswords(ListPasswordReq) returns (ListPasswordResp) {};
   // GetVersion returns version information of the server.
   rpc GetVersion(VersionReq) returns (VersionResp) {};
+  // ListRefresh lists all the refresh token entries for a particular user.
+  rpc ListRefresh(ListRefreshReq) returns (ListRefreshResp) {};
+  // RevokeRefresh revokes the refresh token for the provided user-client pair.
+  //
+  // Note that each user-client pair can have only one refresh token at a time.
+  rpc RevokeRefresh(RevokeRefreshReq) returns (RevokeRefreshResp) {};
 }
