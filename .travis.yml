@@ -1,13 +1,22 @@
 # Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
+services:
+  - docker
+addons:
+  apt:
+    packages:
+    - netcat
 os:
   - linux
-  - osx
 julia:
   - 1.0
   - nightly
 notifications:
   email: false
+before_install:
+  - docker pull quay.io/dexidp/dex:v2.13.0
+  - docker run -d --net=host -v $TRAVIS_BUILD_DIR/test:/dexcfg quay.io/dexidp/dex:v2.13.0 serve /dexcfg/dexconfig.yaml
+  - $TRAVIS_BUILD_DIR/test/waitdex.sh
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'using Pkg; Pkg.develop("HPack"); Pkg.add(PackageSpec(url="https://github.com/tanmaykm/HTTP2.jl.git", rev="tan/julia10")); Pkg.add(PackageSpec(url="https://github.com/tanmaykm/gRPC.jl.git", rev="master")); Pkg.clone(pwd()); Pkg.build("DexClient"); Pkg.test("DexClient"; coverage=true)';
