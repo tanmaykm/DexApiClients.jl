@@ -19,4 +19,4 @@ before_install:
   - $TRAVIS_BUILD_DIR/test/waitdex.sh
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; Pkg.develop("HPack"); Pkg.add(PackageSpec(url="https://github.com/tanmaykm/HTTP2.jl.git", rev="tan/julia10")); Pkg.add(PackageSpec(url="https://github.com/tanmaykm/gRPC.jl.git", rev="master")); Pkg.clone(pwd()); Pkg.build("DexClient"); Pkg.test("DexClient"; coverage=true)';
+  - julia -e 'using Pkg; Pkg.clone("https://github.com/tanmaykm/HPack.jl.git"); Pkg.clone("https://github.com/tanmaykm/HTTP2.jl.git"); Pkg.clone("https://github.com/tanmaykm/gRPC.jl.git"); Pkg.clone(pwd()); Pkg.build("DexClient"); Pkg.test("DexClient"; coverage=true)';
