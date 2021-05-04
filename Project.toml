@@ -1,0 +1,22 @@
+name = "DexApiClients"
+uuid = "1b6cb5ff-c1a6-4467-86b2-339ea3e1a3c4"
+keywords = ["dex", "julia"]
+authors = ["Tanmay Mohapatra <tanmaykm@gmail.com>"]
+version = "0.1.0"
+license = "MIT"
+desc = "Dex gRPC API Client in Julia"
+
+[deps]
+gRPCClient = "aaca4a50-36af-4a1d-b878-4c443f2061ad"
+ProtoBuf = "3349acd9-ac6a-5e09-bcdb-63829b23a429"
+
+[compat]
+julia = "1.3"
+gRPCClient = "0.1"
+ProtoBuf = "0.11"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
