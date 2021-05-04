@@ -3,7 +3,7 @@ issuer: http://127.0.0.1/dex
 storage:
   type: sqlite3
   config:
-    file: /dexcfg/dex.db
+    file: /tmp/dex.db
 
 web:
   http: 0.0.0.0:5556

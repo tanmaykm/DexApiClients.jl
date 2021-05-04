@@ -1,5 +1,7 @@
-using DexClient
+using DexApiClients
 using Test
 
 include("testdex.jl")
-test_all()
+@testset "Dex" begin
+    test_all()
+end
